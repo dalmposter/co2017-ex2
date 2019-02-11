@@ -33,7 +33,7 @@ public class BestFitMemManager extends MemManager
 			}
 			
 			//increase curr to point to the next address not considered in calculating size.
-			curr += Math.min(1, size);
+			curr += Math.max(1, size);
 		}
 		
 		//if this is called when no space of size s is available, the return will be -1 (not valid).

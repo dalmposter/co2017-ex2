@@ -18,16 +18,17 @@ public class FirstFitMemManager extends MemManager
 		{
 			//get size of free space starting at curr. COULD BE ZERO.
 			int size = countFreeSpacesAt(curr);
+			//System.out.println("FirstFitMemManager counted " + size + " free spaces at " + curr);
 					
 			//is the space enough?
-			if(size > s)
+			if(size >= s)
 			{
 				//my job here is done, returning first fit
 				return curr;
 			}
 				
 			//increase curr to point to the next address not considered in calculating size.
-			curr += Math.min(1, size);
+			curr += Math.max(1, size);
 		}
 				
 		//if this is called when no space of size s is available, the return will be -1 (not valid).

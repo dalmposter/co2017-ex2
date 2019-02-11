@@ -61,6 +61,8 @@ public abstract class MemManager
 		//the address immediately after the space to use for p
 		int endAddress = foundAddress + p.getSize();
 		
+		System.out.println(p + " calculated start and end address : " + foundAddress + ", " + endAddress);
+		
 		//assign the space
 		p.setAddress(foundAddress);
 		for(int i = foundAddress; i < endAddress; i++)
