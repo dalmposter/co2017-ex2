@@ -21,6 +21,7 @@ public class Process implements Runnable
 		this.size = size;
 		this.runtime = runtime;
 		this.memManager = memManager;
+		address = -1;
 	}
 
 	public int getAddress()
@@ -48,7 +49,14 @@ public class Process implements Runnable
 	{
 		System.out.println(this + " waiting to run.");
 		
-		//TODO allocate memory
+		//TODO: might need to do something with this exception.
+		try
+		{
+			memManager.allocate(this);
+		} catch (InterruptedException e1)
+		{
+			e1.printStackTrace();
+		}
 		
 		System.out.println(this + " running.");
 		
@@ -60,7 +68,7 @@ public class Process implements Runnable
 			e.printStackTrace();
 		}
 		
-		//TODO release memory
+		memManager.free(this);
 		
 		System.out.println(this + " has finished.");
 	}

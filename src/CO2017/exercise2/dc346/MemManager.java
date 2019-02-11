@@ -18,7 +18,7 @@ public abstract class MemManager
 		_memory = new char[s];
 		for(int i = 0; i < s; i++)
 		{
-			_memory[s] = '.';
+			_memory[i] = '.';
 		}
 	}
 	
@@ -48,20 +48,81 @@ public abstract class MemManager
 	}
 
 	//TODO: implement
-	public void allocate(Process p) throws java.lang.InterruptedException
+	public synchronized void allocate(Process p) throws java.lang.InterruptedException
 	{
+		System.out.println(p + " called allocate()");
+		//not enough space, waiting
+		while(p.getSize() > _largestSpace) wait();
+		
+		System.out.println(p + " passed guard on allocate()");
+		
+		//start address of free space found
+		int foundAddress = findSpace(p.getSize());
+		//the address immediately after the space to use for p
+		int endAddress = foundAddress + p.getSize();
+		
+		//assign the space
+		p.setAddress(foundAddress);
+		for(int i = foundAddress; i < endAddress; i++)
+		{
+			_memory[i] = p.getId();
+		}
+		
+		System.out.println(p + " finished assigning it's memory");
+		
+		//update _largestSpace
+		_largestSpace = 0;
+		int curr = 0;
+		while(curr < _memory.length)
+		{
+			//size of space at curr
+			int thisPass = countFreeSpacesAt(curr);
+			_largestSpace = Math.max(_largestSpace, thisPass);
+			//jump to the address after the free block beginning at curr
+			curr += Math.max(1, thisPass);
+		}
+		
+		System.out.println(p + " finished updating _largestSpace");
+		
 		//memory has now changed since last toString call
 		_changed = true;
+		
+		notifyAll();
+		
+		System.out.println(p + " notified all");
 	}
 	
 	//TODO: implement
-	public void free(Process p)
+	public synchronized void free(Process p)
 	{
+		//wipe memory used by p
+		//store end address of p in a variable to save the loop recalculating each pass
+		int end = p.getAddress() + p.getSize();
+		for(int i = p.getAddress(); i < end; i++)
+		{
+			_memory[i] = '.';
+		}
+		
+		p.setAddress(-1);
+		
+		//update _largestSpace
+		_largestSpace = 0;
+		int curr = 0;
+		while(curr < _memory.length)
+		{
+			//size of space at curr
+			int thisPass = countFreeSpacesAt(curr);
+			_largestSpace = Math.max(_largestSpace, thisPass);
+			//jump to the address after the free block beginning at curr
+			curr += Math.max(1, thisPass);
+		}
+		
 		//memory has now changed since last toString call
 		_changed = true;
+		
+		notifyAll();
 	}
 	
-	//TODO: implement
 	public String toString()
 	{
 		_changed = false;
