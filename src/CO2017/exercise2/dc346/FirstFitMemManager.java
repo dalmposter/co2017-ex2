@@ -1,5 +1,10 @@
 package CO2017.exercise2.dc346;
 
+/**
+ * A memory manager that uses the first fit method. Inherits from MemManager and implements findSpace().
+ * @author Dominic Cousins
+ *
+ */
 public class FirstFitMemManager extends MemManager
 {
 
@@ -8,6 +13,11 @@ public class FirstFitMemManager extends MemManager
 		super(s);
 	}
 
+	/**
+	 * Finds the right space in memory for size s. Assumes there is a space of at least size s so be careful!
+	 * This implementation returns the space with the lowest index that has a size at least s.
+	 * @return start index of found space
+	 */
 	@Override
 	protected int findSpace(int s)
 	{

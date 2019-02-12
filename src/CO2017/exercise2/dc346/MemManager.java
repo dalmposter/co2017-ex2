@@ -1,5 +1,12 @@
 package CO2017.exercise2.dc346;
 
+/**
+ * Abstract super class for memory managers. Holds a char[] representation of memory.
+ * Implements functions to allocate and free up memory. Can be converted to a string via toString()
+ * To display a visual representation of memory and the states of non-finished processes.
+ * @author Dominic Cousins
+ *
+ */
 public abstract class MemManager
 {
 	//has state of memory changed since last call of toString()?
@@ -9,7 +16,7 @@ public abstract class MemManager
 	//array representation of the memory
 	char[] _memory;
 	
-	//done
+	//Initialises a new MemManager with memory of size s.
 	public MemManager(int s)
 	{
 		_largestSpace = s;
@@ -27,8 +34,14 @@ public abstract class MemManager
 		return _changed;
 	}
 	
+	//Method to be implemented by children. Finds the appropriate space for a process requiring s memory addresses.
 	protected abstract int findSpace(int s);
 	
+	/**
+	 * Returns the number of consecutive free spaces starting at and including pos.
+	 * @param pos index to start counting at
+	 * @return free spaces in this block
+	 */
 	int countFreeSpacesAt(int pos)
 	{
 		int out = 0;
@@ -42,26 +55,30 @@ public abstract class MemManager
 				out++;
 				pos++;
 			}
-			//if pos is full return out
+			//if pos is not free return out
 			else return out;
 		}
 	}
 
-	//TODO: implement
+	/**
+	 * Allocates memory to given process. Waits if there is not an appropriate space.
+	 * @param p The Process to allocate memory to
+	 * @throws java.lang.InterruptedException on wait()
+	 */
 	public synchronized void allocate(Process p) throws java.lang.InterruptedException
 	{
-		System.out.println(p + " called allocate()");
+		//System.out.println(p + " called allocate()");
 		//not enough space, waiting
 		while(p.getSize() > _largestSpace) wait();
 		
-		System.out.println(p + " passed guard on allocate()");
+		//System.out.println(p + " passed guard on allocate()");
 		
 		//start address of free space found
 		int foundAddress = findSpace(p.getSize());
 		//the address immediately after the space to use for p
 		int endAddress = foundAddress + p.getSize();
 		
-		System.out.println(p + " calculated start and end address : " + foundAddress + ", " + endAddress);
+		//System.out.println(p + " calculated start and end address : " + foundAddress + ", " + endAddress);
 		
 		//assign the space
 		p.setAddress(foundAddress);
@@ -70,7 +87,7 @@ public abstract class MemManager
 			_memory[i] = p.getId();
 		}
 		
-		System.out.println(p + " finished assigning it's memory");
+		//System.out.println(p + " finished assigning it's memory");
 		
 		//update _largestSpace
 		_largestSpace = 0;
@@ -84,17 +101,20 @@ public abstract class MemManager
 			curr += Math.max(1, thisPass);
 		}
 		
-		System.out.println(p + " finished updating _largestSpace");
+		//System.out.println(p + " finished updating _largestSpace");
 		
 		//memory has now changed since last toString call
 		_changed = true;
 		
 		notifyAll();
 		
-		System.out.println(p + " notified all");
+		//System.out.println(p + " notified all");
 	}
 	
-	//TODO: implement
+	/**
+	 * Frees up memory in use by given Process. Notifies all processes waiting for a space in memory.
+	 * @param p The process to free up memory from
+	 */
 	public synchronized void free(Process p)
 	{
 		//wipe memory used by p
@@ -125,6 +145,9 @@ public abstract class MemManager
 		notifyAll();
 	}
 	
+	/**
+	 * Get a visual representation of memory and the value of _largestSpace.
+	 */
 	public String toString()
 	{
 		_changed = false;
@@ -149,6 +172,10 @@ public abstract class MemManager
 				out += "|\n";
 			}
 		}
+		
+		//get and pad largest space
+		String ls = Integer.toString(_largestSpace);
+		while(ls.length() < 3) ls = " " + ls;
 		
 		out += "ls: " + _largestSpace;
 		
