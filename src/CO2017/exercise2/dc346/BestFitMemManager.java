@@ -32,7 +32,7 @@ public class BestFitMemManager extends MemManager
 			int size = countFreeSpacesAt(curr);
 			
 			//is the space enough?
-			if(size > s)
+			if(size >= s)
 			{
 				//is it better than current best? (or is there no best)
 				if(best[0] < 0 || best[1] > size)
