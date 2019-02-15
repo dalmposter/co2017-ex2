@@ -129,6 +129,7 @@ public abstract class MemManager
 		
 		//update _largestSpace
 		_largestSpace = 0;
+		//the index we're currently considering
 		int curr = 0;
 		while(curr < _memory.length)
 		{
