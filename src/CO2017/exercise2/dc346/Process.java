@@ -97,18 +97,28 @@ public class Process implements Runnable
 	 */
 	public String toString()
 	{
+		StringBuilder out = new StringBuilder();
+		out.append(id + ":");
 		String ad;
 		if(address < 0) ad = "  U";
 		else
 		{
 			//get address and pad to 3 characters
-			ad = Integer.toString(address);
-			while(ad.length() < 3) ad = " " + ad;
+			ad = String.format("%3s", Integer.toString(address));
+			//while(ad.length() < 3) ad = " " + ad; //relic line
 		}
 		
-		//get size and pad to 3 characters
+		out.append(ad + "+");
+		
+		//get size and pad to 2 characters
 		String si = Integer.toString(size);
-		while(si.length() < 2) si = " " + si;
-		return id + ":" + ad + "+" + si;
+		si = String.format("%2s",Integer.toString(size));
+		
+		out.append(si);
+		
+		//while(si.length() < 2) si = " " + si; //relic line
+		//return id + ":" + ad + "+" + si;
+		
+		return out.toString();
 	}
 }

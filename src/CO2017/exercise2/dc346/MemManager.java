@@ -152,34 +152,48 @@ public abstract class MemManager
 	public String toString()
 	{
 		_changed = false;
-		String out = "";
+		
+		//I changed to using a StringBuilder over repeatedly concatenating strings.
+		//Any lines commented 'relic line' indicate code prior to this change.
+		//String out = ""; //relic line.
+		StringBuilder out = new StringBuilder();
 		
 		for(int i = 0; i < _memory.length; i++)
 		{
 			//start a new row
 			if(i % 20 == 0)
 			{
-				String ad = Integer.toString(i);
-				while(ad.length() < 3) ad = " " + ad;
-				out += ad + "|";
+				//String ad = Integer.toString(i); //relic line
+				//while(ad.length() < 3) ad = " " + ad; //relic line
+				out.append(String.format("%3s", Integer.toString(i)));
+				out.append("|");
+				
+				//out += ad + "|"; //relic line
 			}
 			
 			//print current address
-			out += _memory[i];
+			out.append(_memory[i]);
+			//out += _memory[i]; //relic line
 			
 			//end current row
 			if(i % 20 == 19 || i == _memory.length - 1)
 			{
-				out += "|\n";
+				out.append("|\n");
+				//out += "|\n"; //relic line
 			}
 		}
 		
 		//get and pad largest space
-		String ls = Integer.toString(_largestSpace);
-		while(ls.length() < 3) ls = " " + ls;
+		//String ls = Integer.toString(_largestSpace); //relic line
+		//while(ls.length() < 3) ls = " " + ls; //relic line
 		
-		out += "ls: " + _largestSpace;
+		String ls = String.format("%3s", Integer.toString(_largestSpace));
 		
-		return out;
+		out.append("ls:");
+		out.append(ls);
+		
+		//out += "ls: " + _largestSpace; //relic line
+		
+		return out.toString();
 	}
 }
